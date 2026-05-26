@@ -1941,7 +1941,7 @@ function ResponseAgentDetailPage({
       />
 
       <div className="shrink-0 px-6 pb-6">
-        <div className="inline-flex items-center border-b border-border">
+        <div className="inline-flex items-center">
           {(
             [
               { key: "outcomes", label: "Outcomes" },
@@ -1963,7 +1963,7 @@ function ResponseAgentDetailPage({
                 type="button"
                 onClick={() => setActiveDetailTab(tab.key)}
                 className={cn(
-                  "relative flex items-center gap-1 px-4 py-2 text-sm",
+                  "relative flex items-center gap-1 px-4 py-2 text-[13px]",
                   isActive ? "text-primary" : "text-muted-foreground hover:text-foreground",
                 )}
               >
@@ -2403,7 +2403,7 @@ export function ReviewsResponseAgentsPage({
       />
 
       <div className="shrink-0 px-6 pb-6">
-        <div className="inline-flex items-center border-b border-border">
+        <div className="inline-flex items-center">
           {[
             { key: "agents", label: "Agents" },
             { key: "library", label: "Library" },
@@ -2415,7 +2415,7 @@ export function ReviewsResponseAgentsPage({
                 type="button"
                 onClick={() => setActiveTab(tab.key as "agents" | "library")}
                 className={cn(
-                  "relative px-4 py-2 text-sm",
+                  "relative flex items-center gap-1 px-4 py-2 text-[13px]",
                   isActive ? "text-primary" : "text-muted-foreground hover:text-foreground",
                 )}
               >

@@ -580,7 +580,7 @@ function AppointmentAgentDetailView({
 
       {/* ── Tab bar ── */}
       <div className="shrink-0 px-6 pb-6">
-        <div className="inline-flex items-center border-b border-border">
+        <div className="inline-flex items-center">
           {DETAIL_TABS.map((tab) => {
             const isActive = activeTab === tab.key;
             return (
@@ -589,7 +589,7 @@ function AppointmentAgentDetailView({
                 type="button"
                 onClick={() => setActiveTab(tab.key)}
                 className={cn(
-                  "relative flex items-center gap-1 px-4 py-2 text-sm",
+                  "relative flex items-center gap-1 px-4 py-2 text-[13px]",
                   isActive ? "text-primary" : "text-muted-foreground hover:text-foreground",
                 )}
               >
@@ -852,7 +852,7 @@ export function AppointmentsManagementAgentsPage() {
       <MainCanvasViewHeader title="Appointment management agents" actions={headerActions} />
 
       <div className="shrink-0 px-6 pb-6">
-        <div className="inline-flex items-center border-b border-border">
+        <div className="inline-flex items-center">
           {[
             { key: "agents", label: "Agents" },
             { key: "library", label: "Library" },
@@ -864,7 +864,7 @@ export function AppointmentsManagementAgentsPage() {
                 type="button"
                 onClick={() => setActiveTab(tab.key as "agents" | "library")}
                 className={cn(
-                  "relative px-4 py-2 text-sm",
+                  "relative flex items-center gap-1 px-4 py-2 text-[13px]",
                   isActive ? "text-primary" : "text-muted-foreground hover:text-foreground",
                 )}
               >

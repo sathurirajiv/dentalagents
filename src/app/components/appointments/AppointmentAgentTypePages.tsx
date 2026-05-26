@@ -211,7 +211,7 @@ function AgentDetailView({
       />
 
       <div className="shrink-0 px-6 pb-6">
-        <div className="inline-flex items-center border-b border-border">
+        <div className="inline-flex items-center">
           {tabs.map((tab) => {
             const isActive = activeTab === tab.key;
             return (
@@ -220,7 +220,7 @@ function AgentDetailView({
                 type="button"
                 onClick={() => tab.key !== "reports" && setActiveTab(tab.key)}
                 className={cn(
-                  "relative flex items-center gap-1 px-4 py-2 text-sm",
+                  "relative flex items-center gap-1 px-4 py-2 text-[13px]",
                   isActive ? "text-primary" : "text-muted-foreground hover:text-foreground",
                 )}
               >
@@ -508,7 +508,7 @@ export function AppointmentAgentTypePage({ config }: { config: PageConfig }) {
       {/* Agents / Library tab bar — dental only */}
       {isDental && (
         <div className="shrink-0 px-6 pb-6">
-          <div className="inline-flex items-center border-b border-border">
+          <div className="inline-flex items-center">
             {(["agents", "library"] as const).map((tab) => {
               const isActive = activeTab === tab;
               const label = tab === "agents" ? "Agents" : "Library";
@@ -518,7 +518,7 @@ export function AppointmentAgentTypePage({ config }: { config: PageConfig }) {
                   type="button"
                   onClick={() => setActiveTab(tab)}
                   className={cn(
-                    "relative px-4 py-2 text-sm",
+                    "relative flex items-center gap-1 px-4 py-2 text-[13px]",
                     isActive ? "text-primary" : "text-muted-foreground hover:text-foreground",
                   )}
                 >
