@@ -2483,7 +2483,7 @@ export function ReviewsResponseAgentsPage({
         </div>
       ) : (
         <div className="min-h-0 flex-1 px-6 pb-6 pt-0">
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {RESPONSE_AGENT_LIBRARY_TEMPLATES.map((template) => (
               <ResponseAgentLibraryTemplateCard key={template.id} template={template} />
             ))}

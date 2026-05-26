@@ -168,6 +168,8 @@ export interface L2NavLayoutProps {
   footerSlot?: ReactNode;
   /** sessionStorage key — when provided, active item persists across refresh */
   storageKey?: string;
+  /** When true, opening one section closes all others (accordion). Default false. */
+  singleOpenAccordion?: boolean;
   "data-no-print"?: boolean;
 }
 
@@ -197,6 +199,7 @@ export function L2NavLayout({
   defaultExpandedSections,
   footerSlot,
   storageKey,
+  singleOpenAccordion = false,
   "data-no-print": noprint,
 }: L2NavLayoutProps) {
 
@@ -223,7 +226,16 @@ export function L2NavLayout({
   const active = controlledActive ?? internalActive;
 
   const toggle = (label: string) =>
-    setExpanded(prev => ({ ...prev, [label]: !prev[label] }));
+    setExpanded(prev => {
+      const wasOpen = prev[label];
+      if (singleOpenAccordion) {
+        return Object.fromEntries(sections.map(s => [
+          s.label,
+          s.label === label ? !wasOpen : false,
+        ]));
+      }
+      return { ...prev, [label]: !wasOpen };
+    });
 
   const activate = (key: string) => {
     setInternalActive(key);
@@ -312,24 +324,30 @@ export function L2NavLayout({
             }
           </button>
 
-          {expanded[section.label] && section.children.map(child => {
-            const { label: childLabel, key: childKey, external } = l2ChildParts(child);
-            const compoundKey = `${section.label}/${childKey}`;
-            const isActive = active === compoundKey;
-            return (
-              <button
-                key={`${section.label}/${childKey}`}
-                onClick={() => activate(compoundKey)}
-                className={isActive ? CHILD_ACTIVE : CHILD_INACTIVE}
-                style={{ fontWeight: isActive ? 400 : 300 }}
-              >
-                <span>{childLabel}</span>
-                {external && (
-                  <ExternalLink className="w-3.5 h-3.5 shrink-0 text-muted-foreground" />
-                )}
-              </button>
-            );
-          })}
+          <div className={`grid transition-[grid-template-rows] duration-200 ease-out ${
+            expanded[section.label] ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
+          }`}>
+            <div className="overflow-hidden">
+              {section.children.map(child => {
+                const { label: childLabel, key: childKey, external } = l2ChildParts(child);
+                const compoundKey = `${section.label}/${childKey}`;
+                const isActive = active === compoundKey;
+                return (
+                  <button
+                    key={`${section.label}/${childKey}`}
+                    onClick={() => activate(compoundKey)}
+                    className={isActive ? CHILD_ACTIVE : CHILD_INACTIVE}
+                    style={{ fontWeight: isActive ? 400 : 300 }}
+                  >
+                    <span>{childLabel}</span>
+                    {external && (
+                      <ExternalLink className="w-3.5 h-3.5 shrink-0 text-muted-foreground" />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
         </div>
       ))}
 

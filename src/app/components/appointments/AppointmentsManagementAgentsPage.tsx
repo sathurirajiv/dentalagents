@@ -558,7 +558,7 @@ function AppointmentAgentDetailView({
         actions={(
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button type="button" variant="outline" size="sm" className="h-9 gap-1 rounded-lg text-sm">
+              <Button type="button" variant="outline" className="h-[var(--button-height)] gap-1 rounded-lg text-[13px]">
                 Actions
                 <ChevronDown className="h-3.5 w-3.5" strokeWidth={1.6} absoluteStrokeWidth />
               </Button>
@@ -829,7 +829,7 @@ export function AppointmentsManagementAgentsPage() {
         <Button type="button" variant="outline" size="icon" aria-label="Search agents">
           <Search className="h-[14px] w-[14px]" strokeWidth={1.6} absoluteStrokeWidth />
         </Button>
-        <Button type="button" className="h-9 rounded-lg text-sm">
+        <Button type="button" className="h-[var(--button-height)] rounded-lg text-[13px]">
           Create agent
         </Button>
         <Button type="button" variant="outline" size="icon" aria-label="Filter agents">

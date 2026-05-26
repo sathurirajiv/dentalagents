@@ -1,10 +1,23 @@
 import { useMemo, useState } from "react";
+import { useProductVertical } from "@/app/context/ProductVerticalContext";
 import { createColumnHelper, type ColumnDef } from "@tanstack/react-table";
-import { Download, Filter, Search } from "lucide-react";
+import { type DateRange } from "react-day-picker";
+import { FunnelSimple } from "@phosphor-icons/react";
+import { ChevronDown, Download, ExternalLink, Filter, Info, MoreHorizontal, Search } from "lucide-react";
 import { MainCanvasViewHeader } from "@/app/components/layout/MainCanvasViewHeader";
 import { AppDataTable } from "@/app/components/ui/AppDataTable";
 import { Avatar, AvatarFallback, AvatarImage } from "@/app/components/ui/avatar";
 import { Button } from "@/app/components/ui/button";
+import { Calendar } from "@/app/components/ui/calendar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/app/components/ui/dropdown-menu";
+import { Popover, PopoverContent, PopoverTrigger } from "@/app/components/ui/popover";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/app/components/ui/tooltip";
 import { cn } from "@/app/components/ui/utils";
 
 type AppointmentStatus =
@@ -193,6 +206,137 @@ function initials(name: string): string {
     .toUpperCase();
 }
 
+function MetricCard({ value, label, tooltip }: {
+  value: number | string; label: string; tooltip: string;
+}) {
+  return (
+    <div className="flex flex-col rounded-lg border border-border bg-card p-4">
+      <span className="text-[24px] font-medium leading-[36px] tracking-[-0.02em] tabular-nums text-foreground">
+        {value}
+      </span>
+      <div className="mt-2 flex items-center gap-1">
+        <span className="text-[13px] leading-[18px] text-muted-foreground">{label}</span>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button type="button" className="flex items-center text-muted-foreground hover:text-foreground">
+              <Info className="h-4 w-4 shrink-0" strokeWidth={1.6} absoluteStrokeWidth />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="top" className="max-w-[200px] text-left text-balance">
+            {tooltip}
+          </TooltipContent>
+        </Tooltip>
+      </div>
+    </div>
+  );
+}
+
+// ─── Date range presets ──────────────────────────────────────────────────────
+
+type DatePreset = "last-month" | "last-2-months" | "last-3-months" | "last-6-months" | "last-year" | "custom";
+
+const PRESET_LABELS: Record<DatePreset, string> = {
+  "last-month": "Last month",
+  "last-2-months": "Last 2 months",
+  "last-3-months": "Last 3 months",
+  "last-6-months": "Last 6 months",
+  "last-year": "Last year",
+  "custom": "Custom",
+};
+
+function fmtShort(d: Date): string {
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+
+function DateRangeDropdown() {
+  const [open, setOpen] = useState(false);
+  const [showCalendar, setShowCalendar] = useState(false);
+  const [preset, setPreset] = useState<DatePreset>("last-6-months");
+  const [customRange, setCustomRange] = useState<DateRange | undefined>();
+
+  const label =
+    preset === "custom" && customRange?.from
+      ? customRange.to
+        ? `${fmtShort(customRange.from)} – ${fmtShort(customRange.to)}`
+        : fmtShort(customRange.from)
+      : PRESET_LABELS[preset];
+
+  const handleClose = () => {
+    setOpen(false);
+    setShowCalendar(false);
+  };
+
+  return (
+    <Popover
+      open={open}
+      onOpenChange={(v) => {
+        setOpen(v);
+        if (!v) setShowCalendar(false);
+      }}
+    >
+      <PopoverTrigger asChild>
+        <Button
+          type="button"
+          variant="outline"
+          className="h-[var(--button-height)] gap-1.5 rounded-lg px-3 text-[13px] font-normal"
+        >
+          {label}
+          <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" strokeWidth={1.6} absoluteStrokeWidth />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent align="end" className="w-auto p-0">
+        {showCalendar ? (
+          <Calendar
+            mode="range"
+            selected={customRange}
+            onSelect={(range) => {
+              setCustomRange(range);
+              if (range?.from && range?.to) {
+                setPreset("custom");
+                handleClose();
+              }
+            }}
+            defaultMonth={customRange?.from ?? new Date()}
+            numberOfMonths={2}
+            className="p-3"
+          />
+        ) : (
+          <div className="flex flex-col p-1">
+            {(["last-month", "last-2-months", "last-3-months", "last-6-months", "last-year"] as DatePreset[]).map(
+              (p) => (
+                <button
+                  key={p}
+                  type="button"
+                  onClick={() => { setPreset(p); handleClose(); }}
+                  className={cn(
+                    "flex items-center rounded-md px-3 py-2 text-[13px] text-left transition-colors hover:bg-accent",
+                    preset === p ? "font-medium text-primary" : "text-foreground",
+                  )}
+                >
+                  {PRESET_LABELS[p]}
+                </button>
+              ),
+            )}
+            <div className="my-1 h-px bg-border" />
+            <button
+              type="button"
+              onClick={() => setShowCalendar(true)}
+              className={cn(
+                "flex items-center rounded-md px-3 py-2 text-[13px] text-left transition-colors hover:bg-accent",
+                preset === "custom" ? "font-medium text-primary" : "text-foreground",
+              )}
+            >
+              Custom range…
+            </button>
+          </div>
+        )}
+      </PopoverContent>
+    </Popover>
+  );
+}
+
+const columnHelper = createColumnHelper<AppointmentRow>();
+
 function Stat({ value, label }: { value: number | string; label: string }) {
   return (
     <div className="flex flex-col gap-1">
@@ -204,9 +348,9 @@ function Stat({ value, label }: { value: number | string; label: string }) {
   );
 }
 
-const columnHelper = createColumnHelper<AppointmentRow>();
-
 export function AppointmentsReviewPage() {
+  const { vertical } = useProductVertical();
+  const isDental = vertical === "dental";
   const [activeTab, setActiveTab] = useState<(typeof TABS)[number]["key"]>("all");
   const [columnSheetOpen, setColumnSheetOpen] = useState(false);
 
@@ -296,31 +440,94 @@ export function AppointmentsReviewPage() {
   return (
     <div className="flex h-full min-h-0 flex-col bg-background">
       <MainCanvasViewHeader
-        title="Review appointments"
+        title="All appointments"
         actions={
           <div className="flex items-center gap-2">
             <Button type="button" variant="outline" size="icon" aria-label="Search appointments">
               <Search className="h-[14px] w-[14px]" strokeWidth={1.6} absoluteStrokeWidth />
             </Button>
-            <Button type="button" variant="outline" size="icon" aria-label="Filter appointments">
-              <Filter className="h-[14px] w-[14px]" strokeWidth={1.6} absoluteStrokeWidth />
-            </Button>
-            <Button type="button" className="h-9 gap-1.5 rounded-lg text-sm">
-              <Download className="size-3.5" strokeWidth={1.6} absoluteStrokeWidth />
-              Export
-            </Button>
+            {isDental && <DateRangeDropdown />}
+            {isDental ? (
+              <Button type="button" variant="outline" size="icon" aria-label="Filter appointments">
+                <FunnelSimple size={14} weight="regular" className="text-[#555] dark:text-muted-foreground" />
+              </Button>
+            ) : (
+              <Button type="button" variant="outline" size="icon" aria-label="Filter appointments">
+                <Filter className="h-[14px] w-[14px]" strokeWidth={1.6} absoluteStrokeWidth />
+              </Button>
+            )}
+            {isDental ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button type="button" variant="outline" size="icon" aria-label="More actions">
+                    <MoreHorizontal className="h-[14px] w-[14px]" strokeWidth={1.6} absoluteStrokeWidth />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-52">
+                  <DropdownMenuItem className="text-[13px] gap-2">
+                    <Download className="h-3.5 w-3.5 text-muted-foreground" strokeWidth={1.6} absoluteStrokeWidth />
+                    Export as CSV
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="text-[13px] gap-2">
+                    <Download className="h-3.5 w-3.5 text-muted-foreground" strokeWidth={1.6} absoluteStrokeWidth />
+                    Export as PDF
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem className="text-[13px] gap-2">
+                    <ExternalLink className="h-3.5 w-3.5 text-muted-foreground" strokeWidth={1.6} absoluteStrokeWidth />
+                    Share report
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="text-[13px] gap-2">
+                    <ExternalLink className="h-3.5 w-3.5 text-muted-foreground" strokeWidth={1.6} absoluteStrokeWidth />
+                    Open in Reports
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button type="button" className="h-[var(--button-height)] gap-1.5 rounded-lg text-[13px]">
+                <Download className="size-3.5" strokeWidth={1.6} absoluteStrokeWidth />
+                Export
+              </Button>
+            )}
           </div>
         }
       />
 
       {/* Stats */}
       <div className="shrink-0 px-6 pb-6 pt-0">
-        <div className="grid grid-cols-2 gap-x-8 gap-y-6 md:grid-cols-4">
-          <Stat value={counts.total} label="Appointments" />
-          <Stat value={counts.unconfirmed} label="Unconfirmed" />
-          <Stat value={counts.cancelled} label="Cancellations received" />
-          <Stat value={counts.noShow} label="No-shows" />
-        </div>
+        {isDental ? (
+          <TooltipProvider>
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+              <MetricCard
+                value={counts.total}
+                label="Appointments"
+                tooltip="Total appointments across all statuses in the selected date range"
+              />
+              <MetricCard
+                value={counts.unconfirmed}
+                label="Unconfirmed"
+                tooltip="Appointments awaiting patient confirmation"
+              />
+              <MetricCard
+                value={counts.cancelled}
+                label="Cancellations received"
+                tooltip="Appointments cancelled by patient or provider"
+              />
+              <MetricCard
+                value={counts.noShow}
+                label="No-shows"
+                tooltip="Patients who did not attend their scheduled appointment"
+              />
+            </div>
+          </TooltipProvider>
+        ) : (
+          <div className="grid grid-cols-2 gap-x-8 gap-y-6 md:grid-cols-4">
+            <Stat value={counts.total} label="Appointments" />
+            <Stat value={counts.unconfirmed} label="Unconfirmed" />
+            <Stat value={counts.cancelled} label="Cancellations received" />
+            <Stat value={counts.noShow} label="No-shows" />
+          </div>
+        )}
       </div>
 
       {/* Tabs */}

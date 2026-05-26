@@ -5,6 +5,7 @@ import {
   useLayoutEffect,
   useMemo,
   useCallback,
+  Fragment,
 } from "react";
 import { usePersistedState } from "@/app/hooks/usePersistedState";
 import type { LucideIcon } from "lucide-react";
@@ -210,33 +211,39 @@ const dentalSections: SidebarNavSection[] = [
   {
     title: "Marketing",
     items: [
+      { label: "Listings AI", Icon: FigmaIconListings, view: "aeo-product-listing-1" },
+      { label: "Reviews AI", Icon: FigmaIconReviews, view: "reviews" },
+      { label: "Social AI", Icon: FigmaIconSocial, view: "social" },
       { label: "Search AI", Icon: AeoSearchAiL1Icon, view: "aeo-search-ai" },
-      { label: "Listings", Icon: FigmaIconListings, view: "aeo-product-listing-1" },
-      { label: "Reviews", Icon: FigmaIconReviews, view: "reviews" },
-      { label: "Referrals", Icon: FigmaIconReferrals, view: "referrals" },
-      { label: "Marketing automations", Icon: FigmaIconCampaigns, view: "campaigns" },
+      { label: "Referral", Icon: FigmaIconReferrals, view: "referrals" },
+      { label: "Marketing Automation AI", Icon: FigmaIconCampaigns, view: "campaigns" },
     ],
   },
   {
     title: "Operations",
     items: [
       { label: "Inbox", Icon: FigmaIconInbox, view: "inbox" },
+      { label: "Front desk", Icon: HealthcareL1IconFrontdesk, view: "healthcare-frontdesk" },
       { label: "Appointments", Icon: FigmaIconAppointments, view: "appointments" },
-      { label: "Contacts", Icon: FigmaIconContacts, view: "contacts" },
+      { label: "Insurance", Icon: HealthcareL1IconInsurance, view: "healthcare-insurance" },
+      { label: "Intake", Icon: HealthcareL1IconIntake, view: "healthcare-intake" },
+      { label: "Prescriptions", Icon: HealthcareL1IconPrescriptions, view: "healthcare-prescriptions" },
+      { label: "Claims", Icon: HealthcareL1IconClaims, view: "healthcare-claims" },
+      { label: "Patients", Icon: HealthcareL1IconPatients, view: "healthcare-patients" },
       { label: "Payments", Icon: FigmaIconPayments, view: "payments" },
     ],
   },
   {
     title: "Patient experience",
     items: [
-      { label: "Surveys", Icon: FigmaIconSurveys, view: "surveys" },
+      { label: "Surveys AI", Icon: FigmaIconSurveys, view: "surveys" },
+      { label: "Ticketing", Icon: FigmaIconTicketing, view: "ticketing" },
+      { label: "Insights AI", Icon: FigmaIconInsights, view: "insights" },
     ],
   },
   {
-    title: "Analytics",
     items: [
       { label: "Reports", Icon: FigmaIconReports, view: "dashboard" },
-      { label: "Insights", Icon: FigmaIconInsights, view: "insights" },
     ],
   },
 ];
@@ -335,6 +342,7 @@ export function IconStrip({
   const [profileOpen, setProfileOpen] = useState(false);
   const [accountSheetOpen, setAccountSheetOpen] = useState(false);
   const { vertical } = useProductVertical();
+  const isDental = vertical === "dental";
 
   /* ── L1 hover-to-expand (user preference; see useSidebarHoverExpand) ── */
   const [hoverExpandEnabled, setHoverExpandEnabled] = useSidebarHoverExpand();
@@ -405,35 +413,23 @@ export function IconStrip({
   const [navInnerH, setNavInnerH] = useState(0);
   const [overflowNavOpen, setOverflowNavOpen] = useState(false);
 
-  // Sync activeIcon with currentView (layout effect avoids wrong rail highlight on first paint)
+  // Sync activeIcon with currentView — flatNav lookup so label renames are handled automatically.
   useLayoutEffect(() => {
-    if (currentView === "business-overview") setActiveIcon("Overview");
-    else if (currentView === "inbox") setActiveIcon("Inbox");
-    else if (currentView === "reviews") setActiveIcon("Reviews");
-    else if (currentView === "social") setActiveIcon("Social");
-    else if (currentView === "searchai" || currentView === "conversation-stream") setActiveIcon("Chatbot");
-    else if (currentView === "contacts") setActiveIcon("Contacts");
-    else if (currentView === "surveys") setActiveIcon("Surveys");
-    else if (currentView === "ticketing") setActiveIcon("Ticketing");
-    else if (currentView === "campaigns") setActiveIcon("Campaigns");
-    else if (currentView === "insights") setActiveIcon("Insights");
-    else if (currentView === "competitors") setActiveIcon("Competitors");
-    else if (currentView === "referrals") setActiveIcon("Referral");
-    else if (currentView === "healthcare-frontdesk") setActiveIcon("Frontdesk");
-    else if (currentView === "healthcare-insurance") setActiveIcon("Insurance");
-    else if (currentView === "healthcare-intake") setActiveIcon("Intake");
-    else if (currentView === "healthcare-prescriptions") setActiveIcon("Prescriptions");
-    else if (currentView === "healthcare-claims") setActiveIcon("Claims");
-    else if (currentView === "healthcare-patients") setActiveIcon("Patients");
-    else if (currentView === "payments") setActiveIcon("Payments");
-    else if (currentView === "appointments") setActiveIcon("Appointments");
-    else if (currentView === "aeo-product-listing-1") setActiveIcon("Listings");
-    else if (currentView === "aeo-search-ai") setActiveIcon("Search AI");
-    else if (currentView === "dashboard" || currentView === "shared-by-me") setActiveIcon("Reports");
-    else if (currentView === "agent-config" || currentView === "settings") setActiveIcon("Settings");
-    else if (currentView === "agents-monitor" || currentView === "agents-analyze-performance" || currentView === "agents-builder" || currentView === "agent-detail" || currentView === "agents-onboarding" || currentView === "birdai-reports" || currentView === "birdai-journeys") setActiveIcon("Agents");
-    // scheduled-deliveries / schedule-builder: no icon mapping
-  }, [currentView]);
+    const aliases: Partial<Record<string, AppView>> = {
+      "agents-analyze-performance": "agents-monitor",
+      "agents-builder": "agents-monitor",
+      "agent-detail": "agents-monitor",
+      "agents-onboarding": "agents-monitor",
+      "birdai-reports": "agents-monitor",
+      "birdai-journeys": "agents-monitor",
+      "shared-by-me": "dashboard",
+      "searchai": "aeo-search-ai",
+      "conversation-stream": "aeo-search-ai",
+    };
+    const lookupView = (aliases[currentView] ?? currentView) as AppView;
+    const found = flatNav.find(i => i.view === lookupView);
+    if (found) setActiveIcon(found.label);
+  }, [currentView, flatNav]);
 
   const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -465,39 +461,19 @@ export function IconStrip({
 
   const handleNavClick = (label: string) => {
     setActiveIcon(label);
-    if (label === "Overview") onViewChange("business-overview");
-    else if (label === "Agents") onViewChange("agents-monitor");
-    else if (label === "Reviews") {
-      try {
-        sessionStorage.setItem("nav:l2:reviews", JSON.stringify("Human actions/View all reviews"));
-      } catch {
-        // Ignore storage write failures and continue navigation.
+    const found = flatNav.find(i => i.label === label);
+    if (found) {
+      if (found.view === "reviews") {
+        try {
+          sessionStorage.setItem("nav:l2:reviews", JSON.stringify("Human actions/View all reviews"));
+        } catch {
+          // Ignore storage write failures.
+        }
       }
-      onViewChange("reviews");
+      onViewChange(found.view);
+    } else if (label === "Settings") {
+      onViewChange("agent-config");
     }
-    else if (label === "Social") onViewChange("social");
-    else if (label === "Referral" || label === "Referrals") onViewChange("referrals");
-    else if (label === "Contacts") onViewChange("contacts");
-    else if (label === "Marketing automation" || label === "Marketing automations" || label === "Campaigns") {
-      onViewChange("campaigns");
-    }
-    else if (label === "Inbox") onViewChange("inbox");
-    else if (label === "Payments") onViewChange("payments");
-    else if (label === "Appointments") onViewChange("appointments");
-    else if (label === "Chatbot") onViewChange("searchai");
-    else if (label === "Reports") onViewChange("dashboard");
-    else if (label === "Insights") onViewChange("insights");
-    else if (label === "Ticketing") onViewChange("ticketing");
-    else if (label === "Surveys") onViewChange("surveys");
-    else if (label === "Listings") onViewChange("aeo-product-listing-1");
-    else if (label === "Search AI") onViewChange("aeo-search-ai");
-    else if (label === "Frontdesk") onViewChange("healthcare-frontdesk");
-    else if (label === "Insurance") onViewChange("healthcare-insurance");
-    else if (label === "Intake") onViewChange("healthcare-intake");
-    else if (label === "Prescriptions") onViewChange("healthcare-prescriptions");
-    else if (label === "Claims") onViewChange("healthcare-claims");
-    else if (label === "Patients") onViewChange("healthcare-patients");
-    else if (label === "Settings") onViewChange("agent-config");
   };
 
   useLayoutEffect(() => {
@@ -573,7 +549,7 @@ export function IconStrip({
           size={iconSize}
           className={`transition-all duration-200 ${
             isActive
-              ? "text-primary"
+              ? isDental ? "text-foreground" : "text-primary"
               : "text-muted-foreground group-hover:scale-110"
           } ${item.label === "Agents" && isActive ? "group-hover:animate-[agents-shimmer_3s_ease-in-out_infinite]" : ""}`}
         />
@@ -608,7 +584,7 @@ export function IconStrip({
             size={iconSize}
             className={`transition-colors duration-200 ${
               isActive
-                ? "text-primary"
+                ? isDental ? "text-foreground" : "text-primary"
                 : "text-muted-foreground"
             }`}
           />
@@ -616,7 +592,7 @@ export function IconStrip({
         <span
           className={`ml-3 text-[13px] whitespace-nowrap ${
             isActive
-              ? "text-primary"
+              ? isDental ? "text-foreground" : "text-primary"
               : "text-foreground"
           }`}
         >
@@ -635,7 +611,10 @@ export function IconStrip({
   const renderPanelSection = (section: SidebarNavSection, index: number) => (
     <div key={section.title ?? `top-${index}`} className="flex flex-col">
       {section.title && (
-        <div className="px-2 pt-3 pb-1 text-[10px] uppercase tracking-[0.6px] text-muted-foreground">
+        <div className={isDental
+          ? "px-2 pt-2 pb-1 text-[11px] text-muted-foreground"
+          : "px-2 pt-3 pb-1 text-[10px] uppercase tracking-[0.6px] text-muted-foreground"
+        }>
           {section.title}
         </div>
       )}
@@ -675,13 +654,32 @@ export function IconStrip({
             className={`flex min-h-0 flex-1 flex-col items-center py-2 ${
               railMetrics.overflowMode
                 ? "justify-start gap-2 overflow-visible"
-                : "justify-start gap-[18px] overflow-hidden"
+                : `justify-start ${isDental ? "gap-0" : "gap-[18px]"} overflow-hidden`
             }`}
           >
             {railMetrics.overflowMode ? (
               <>
-                {flatNav.slice(0, railMetrics.P).map((item) => renderRailButton(item))}
-                {effectiveSwapItem ? renderRailButton(effectiveSwapItem) : null}
+                {(() => {
+                  const visibleLabels = new Set<string>();
+                  flatNav.slice(0, railMetrics.P).forEach(i => visibleLabels.add(i.label));
+                  if (effectiveSwapItem) visibleLabels.add(effectiveSwapItem.label);
+                  let firstRendered = false;
+                  return activeSections.flatMap((section, si) => {
+                    const visible = section.items.filter(i => visibleLabels.has(i.label));
+                    if (visible.length === 0) return [];
+                    const nodes: React.ReactNode[] = [];
+                    if (firstRendered && isDental) {
+                      nodes.push(<div key={`sep-${si}`} className="w-5 h-px bg-border/60 shrink-0" />);
+                    }
+                    nodes.push(
+                      <div key={section.title ?? `si-${si}`} className="flex flex-col items-center gap-[2px] w-full">
+                        {visible.map(item => renderRailButton(item))}
+                      </div>
+                    );
+                    firstRendered = true;
+                    return nodes;
+                  });
+                })()}
                 <div className="relative shrink-0" ref={overflowNavRef}>
                   {(() => {
                     const moreBtn = (
@@ -723,7 +721,9 @@ export function IconStrip({
                       className={`absolute left-[calc(100%+8px)] top-1/2 z-50 flex w-[260px] max-h-[min(480px,calc(100vh-2rem))] -translate-y-1/2 flex-col overflow-hidden transition-colors duration-300 ${FLOATING_PANEL_SURFACE_CLASSNAME}`}
                     >
                       <div className="flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto px-2 pb-3 pt-3">
-                        {railMetrics.tailSlice.map((item) => (
+                        {railMetrics.tailSlice
+                          .filter((item) => item.view !== effectiveSwapItem?.view)
+                          .map((item) => (
                           <button
                             key={item.view}
                             type="button"
@@ -757,7 +757,16 @@ export function IconStrip({
                 </div>
               </>
             ) : (
-              activeSections.map(renderRailSection)
+              activeSections.map((section, i) => (
+                <Fragment key={section.title ?? `top-${i}`}>
+                  {i > 0 && isDental && (
+                    <div className="w-5 h-px bg-border/60 shrink-0 my-[7px]" />
+                  )}
+                  <div className="flex flex-col items-center gap-[2px] w-full">
+                    {section.items.map(renderRailButton)}
+                  </div>
+                </Fragment>
+              ))
             )}
           </div>
         </div>
@@ -780,7 +789,7 @@ export function IconStrip({
                 height={L1_STRIP_ICON_SIZE}
                 strokeWidth={L1_STRIP_ICON_STROKE_PX}
                 absoluteStrokeWidth
-                className={`transition-all duration-200 ${currentView === "settings" ? "text-primary" : "text-muted-foreground group-hover:scale-110"}`}
+                className={`transition-all duration-200 ${currentView === "settings" ? (isDental ? "text-foreground" : "text-primary") : "text-muted-foreground group-hover:scale-110"}`}
               />
             </button>
           );
@@ -1027,7 +1036,7 @@ export function IconStrip({
         onMouseEnter={handleRailEnter}
         onMouseLeave={handleRailLeave}
         aria-hidden={!expanded}
-        className={`absolute top-2 bottom-2 left-2 w-[272px] flex flex-col rounded-xl border border-white/45 bg-white/70 backdrop-blur-2xl backdrop-saturate-150 shadow-[0_18px_60px_rgba(17,24,39,0.14)] dark:border-white/10 dark:bg-app-shell-rail/72 z-30 transition-[opacity,transform] duration-200 ease-out ${
+        className={`absolute top-2 bottom-2 left-2 w-[272px] flex flex-col rounded-xl z-30 transition-[opacity,transform] duration-200 ease-out ${isDental ? "border border-border/40 bg-white shadow-[0_4px_24px_rgba(17,24,39,0.10)] dark:border-border/30 dark:bg-[#1b1f29]" : "border border-white/45 bg-white/70 backdrop-blur-2xl backdrop-saturate-150 shadow-[0_18px_60px_rgba(17,24,39,0.14)] dark:border-white/10 dark:bg-app-shell-rail/72"} ${
           expanded
             ? "opacity-100 translate-x-0 pointer-events-auto"
             : "opacity-0 -translate-x-2 pointer-events-none"
@@ -1042,8 +1051,13 @@ export function IconStrip({
         </div>
 
         {/* Labeled nav rows */}
-        <div className="flex flex-col items-stretch pb-[8px] pt-0 gap-[2px] flex-1 overflow-y-auto overflow-x-hidden px-[12px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          {activeSections.map(renderPanelSection)}
+        <div className="flex flex-col items-stretch pb-[8px] pt-0 flex-1 overflow-y-auto overflow-x-hidden px-[12px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {activeSections.map((section, i) => (
+            <Fragment key={section.title ?? `top-${i}`}>
+              {i > 0 && isDental && <hr className="border-border/40 my-1" />}
+              {renderPanelSection(section, i)}
+            </Fragment>
+          ))}
         </div>
 
         {/* Footer stack — keep the same order as collapsed: Settings, Notifications, Profile */}
@@ -1060,10 +1074,10 @@ export function IconStrip({
                 height={L1_STRIP_ICON_SIZE}
                 strokeWidth={L1_STRIP_ICON_STROKE_PX}
                 absoluteStrokeWidth
-                className={`transition-colors ${currentView === "settings" ? "text-primary" : "text-muted-foreground"}`}
+                className={`transition-colors ${currentView === "settings" ? (isDental ? "text-foreground" : "text-primary") : "text-muted-foreground"}`}
               />
             </button>
-            <span className={`text-[13px] font-normal leading-none whitespace-nowrap ${currentView === "settings" ? "text-primary" : "text-foreground"}`}>
+            <span className={`text-[13px] font-normal leading-none whitespace-nowrap ${currentView === "settings" && !isDental ? "text-primary" : "text-foreground"}`}>
               Settings
             </span>
           </div>
@@ -1710,45 +1724,56 @@ export function CompetitorsL2NavPanel() {
 /* ═══════════════════════════════════════════
    Appointments L2 Nav Panel – uses L2NavLayout
    ═══════════════════════════════════════════ */
-const appointmentsConfig = {
-  headerAction: { label: "Book an appointment" },
-  defaultExpandedSections: ["Human actions"],
-  sections: [
-    {
-      label: "Human actions",
-      children: [
-        "View all appointments",
-        "View schedule",
-        "Manage waitlist",
-      ],
-    },
-    {
-      label: "Agents",
-      children: [
-        "Appointment agent",
-        "Reminder agent",
-        "Waitlist agent",
-        "Insurance verification agent",
-      ],
-    },
-    {
-      label: "Outcomes",
-      children: [
-        "Bookings",
-        "No-shows",
-        { label: "All reports", external: true },
-      ],
-    },
-    {
-      label: "Resources",
-      children: [
-        "Intake forms",
-        "Phone numbers",
-        "Widgets",
-      ],
-    },
-  ],
-};
+const BASE_AGENTS_CHILDREN = [
+  "Scheduling agents",
+  "Rescheduling agents",
+  "Reminder agents",
+  "Waitlist agents",
+  "Cancellation agents",
+  "Recall agents",
+  "Treatment plan agents",
+  "Revenue agents",
+];
+
+const DENTAL_AGENTS_CHILDREN = [
+  "Scheduling agents",
+  "Rescheduling agents",
+  "Reminder agents",
+  "Pre-visit agents",
+  "Waitlist agents",
+  "Cancellation agents",
+  "Recall agents",
+  "Treatment plan agents",
+  "Revenue agents",
+];
+
+const APPOINTMENTS_SECTIONS_BASE = [
+  {
+    label: "Human actions",
+    children: ["View all appointments", "View schedule"],
+  },
+  {
+    label: "Agents",
+    children: BASE_AGENTS_CHILDREN,
+  },
+  {
+    label: "Outcomes",
+    children: [
+      "Booking performance",
+      "Appointment overview",
+      "Revenue impact",
+      { label: "All reports", external: true },
+    ],
+  },
+  {
+    label: "Resources",
+    children: ["Providers", "Tags"],
+  },
+];
+
+const APPOINTMENTS_SECTIONS_DENTAL = APPOINTMENTS_SECTIONS_BASE.map(s =>
+  s.label === "Agents" ? { ...s, children: DENTAL_AGENTS_CHILDREN } : s,
+);
 
 export type AppointmentsL2NavPanelProps = {
   activeItem: string;
@@ -1756,18 +1781,145 @@ export type AppointmentsL2NavPanelProps = {
 };
 
 export function AppointmentsL2NavPanel({ activeItem, onActiveItemChange }: AppointmentsL2NavPanelProps) {
+  const { vertical } = useProductVertical();
+  const isDental = vertical === "dental";
   return (
     <L2NavLayout
-      {...appointmentsConfig}
+      headerAction={{ label: "Book an appointment" }}
+      defaultExpandedSections={["Human actions"]}
+      sections={isDental ? APPOINTMENTS_SECTIONS_DENTAL : APPOINTMENTS_SECTIONS_BASE}
       defaultActive={APPOINTMENTS_L2_CALENDAR_KEY}
       activeItem={activeItem}
       onActiveItemChange={onActiveItemChange}
+      singleOpenAccordion={isDental}
       data-no-print
     />
   );
 }
 
 export { APPOINTMENTS_L2_CALENDAR_KEY } from "@/app/components/appointmentsL2Nav";
+
+/* ═══════════════════════════════════════════
+   Patients L2 Nav Panel (dental only)
+   ═══════════════════════════════════════════ */
+
+export { PATIENTS_L2_DEFAULT_ACTIVE_KEY } from "@/app/components/patients/patientsL2Nav";
+
+export type PatientsL2NavPanelProps = {
+  activeItem: string;
+  onActiveItemChange: (key: string) => void;
+};
+
+export function PatientsL2NavPanel({ activeItem, onActiveItemChange }: PatientsL2NavPanelProps) {
+  return (
+    <L2NavLayout
+      defaultExpandedSections={["Human actions"]}
+      sections={[
+        {
+          label: "Human actions",
+          children: ["All patients", "Patient segments"],
+        },
+        {
+          label: "Agents",
+          children: ["Patient segmentation agents"],
+        },
+        {
+          label: "Resources",
+          children: ["Intake forms", "Tags", "Import"],
+        },
+      ]}
+      defaultActive="Human actions/All patients"
+      activeItem={activeItem}
+      onActiveItemChange={onActiveItemChange}
+      singleOpenAccordion
+      data-no-print
+    />
+  );
+}
+
+/* ═══════════════════════════════════════════
+   Intake L2 Nav Panel (dental only)
+   ═══════════════════════════════════════════ */
+
+export { INTAKE_L2_DEFAULT_ACTIVE_KEY } from "@/app/components/intake/intakeL2Nav";
+
+export type IntakeL2NavPanelProps = {
+  activeItem: string;
+  onActiveItemChange: (key: string) => void;
+};
+
+export function IntakeL2NavPanel({ activeItem, onActiveItemChange }: IntakeL2NavPanelProps) {
+  return (
+    <L2NavLayout
+      defaultExpandedSections={["Human actions"]}
+      sections={[
+        {
+          label: "Human actions",
+          children: ["Intake pipeline"],
+        },
+        {
+          label: "Agents",
+          children: ["Pre-visit agents"],
+        },
+        {
+          label: "Outcomes",
+          children: ["Intakes completed", { label: "All reports", external: true }],
+        },
+        {
+          label: "Resources",
+          children: ["Intake forms", "Tags"],
+        },
+      ]}
+      defaultActive="Human actions/Intake pipeline"
+      activeItem={activeItem}
+      onActiveItemChange={onActiveItemChange}
+      singleOpenAccordion
+      data-no-print
+    />
+  );
+}
+
+/* ═══════════════════════════════════════════
+   Insurance L2 Nav Panel (dental only)
+   ═══════════════════════════════════════════ */
+
+export { INSURANCE_L2_DEFAULT_ACTIVE_KEY } from "@/app/components/insurance/insuranceL2Nav";
+
+export type InsuranceL2NavPanelProps = {
+  activeItem: string;
+  onActiveItemChange: (key: string) => void;
+};
+
+export function InsuranceL2NavPanel({ activeItem, onActiveItemChange }: InsuranceL2NavPanelProps) {
+  return (
+    <L2NavLayout
+      defaultExpandedSections={["Human actions"]}
+      sections={[
+        {
+          label: "Human actions",
+          children: ["Insurance cases"],
+        },
+        {
+          label: "Agents",
+          children: ["Insurance verification agents"],
+        },
+        {
+          label: "Outcomes",
+          children: ["Insurances verified", { label: "All reports", external: true }],
+        },
+        {
+          label: "Resources",
+          children: ["Insurances verified"],
+        },
+      ]}
+      defaultActive="Human actions/Insurance cases"
+      activeItem={activeItem}
+      onActiveItemChange={onActiveItemChange}
+      singleOpenAccordion
+      data-no-print
+    />
+  );
+}
 
 /* ═══════════════════════════════════════════
    Inbox L2 Nav Panel – uses L2NavLayout

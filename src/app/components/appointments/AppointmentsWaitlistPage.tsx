@@ -319,7 +319,7 @@ export function AppointmentsWaitlistPage() {
           },
         ]}
       />
-      <Button type="button" className="h-9 gap-1.5 rounded-lg text-sm">
+      <Button type="button" className="h-[var(--button-height)] gap-1.5 rounded-lg text-[13px]">
         <Plus className="size-3.5" strokeWidth={1.6} absoluteStrokeWidth />
         Add patients
       </Button>

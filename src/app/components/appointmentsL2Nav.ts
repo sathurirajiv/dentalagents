@@ -12,8 +12,19 @@ export const APPOINTMENTS_L2_REVIEW_KEY = "Human actions/View all appointments";
 /** L2 key for the waitlist management view. */
 export const APPOINTMENTS_L2_WAITLIST_KEY = "Human actions/Manage waitlist";
 
-/** L2 key for the appointment management agents list (matches Reviews response agents pattern). */
-export const APPOINTMENTS_L2_APPOINTMENT_AGENT_KEY = "Agents/Appointment agent";
+/** L2 keys for each agent type under the Agents accordion. */
+export const APPOINTMENTS_L2_SCHEDULING_AGENTS_KEY = "Agents/Scheduling agents";
+export const APPOINTMENTS_L2_RESCHEDULING_AGENTS_KEY = "Agents/Rescheduling agents";
+export const APPOINTMENTS_L2_REMINDER_AGENTS_KEY = "Agents/Reminder agents";
+export const APPOINTMENTS_L2_PRE_VISIT_AGENTS_KEY = "Agents/Pre-visit agents";
+export const APPOINTMENTS_L2_WAITLIST_AGENTS_KEY = "Agents/Waitlist agents";
+export const APPOINTMENTS_L2_CANCELLATION_AGENTS_KEY = "Agents/Cancellation agents";
+export const APPOINTMENTS_L2_RECALL_AGENTS_KEY = "Agents/Recall agents";
+export const APPOINTMENTS_L2_TREATMENT_PLAN_AGENTS_KEY = "Agents/Treatment plan agents";
+export const APPOINTMENTS_L2_REVENUE_AGENTS_KEY = "Agents/Revenue agents";
+
+/** @deprecated Kept for backward compat — maps to Scheduling agents. */
+export const APPOINTMENTS_L2_APPOINTMENT_AGENT_KEY = APPOINTMENTS_L2_SCHEDULING_AGENTS_KEY;
 
 function titleCaseWords(s: string): string {
   return s

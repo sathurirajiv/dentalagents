@@ -8,6 +8,12 @@ import {
   PaymentsL2NavPanel,
   PAYMENTS_L2_DEFAULT_ACTIVE_KEY,
   APPOINTMENTS_L2_CALENDAR_KEY,
+  PatientsL2NavPanel,
+  PATIENTS_L2_DEFAULT_ACTIVE_KEY,
+  IntakeL2NavPanel,
+  INTAKE_L2_DEFAULT_ACTIVE_KEY,
+  InsuranceL2NavPanel,
+  INSURANCE_L2_DEFAULT_ACTIVE_KEY,
   AeoProductListing1L2NavPanel,
   AeoSearchAiL2NavPanel,
 } from "./components/Sidebar";
@@ -43,6 +49,9 @@ import { ScheduleBuilderView } from "./components/ScheduleBuilderView";
 import { ReferralsView, referralsL2KeyToSection } from "./components/ReferralsView";
 import { PaymentsView, paymentsL2KeyToStatusFilter } from "./components/PaymentsView";
 import { AppointmentsView } from "./components/AppointmentsView";
+import { PatientsView } from "./components/patients/PatientsView";
+import { IntakeView } from "./components/intake/IntakeView";
+import { InsuranceView } from "./components/insurance/InsuranceView";
 import { SurveysView } from "./components/SurveysView";
 import { TicketingView } from "./components/TicketingView";
 import { ListingsView } from "./components/ListingsView";
@@ -203,6 +212,18 @@ export default function App() {
   const [appointmentsL2Active, setAppointmentsL2Active] = usePersistedState(
     "nav:l2:appointments",
     APPOINTMENTS_L2_CALENDAR_KEY,
+  );
+  const [patientsL2Active, setPatientsL2Active] = usePersistedState(
+    "nav:l2:patients",
+    PATIENTS_L2_DEFAULT_ACTIVE_KEY,
+  );
+  const [intakeL2Active, setIntakeL2Active] = usePersistedState(
+    "nav:l2:intake",
+    INTAKE_L2_DEFAULT_ACTIVE_KEY,
+  );
+  const [insuranceL2Active, setInsuranceL2Active] = usePersistedState(
+    "nav:l2:insurance",
+    INSURANCE_L2_DEFAULT_ACTIVE_KEY,
   );
   const [settingsL2Active, setSettingsL2Active] = usePersistedState<string>("settings:l2-active", "Business info");
   const [settingsScrollTarget, setSettingsScrollTarget] = useState<string | null>(null);
@@ -616,6 +637,27 @@ export default function App() {
               onActiveItemChange={setAppointmentsL2Active}
             />
           )}
+          {/* Patients L2 nav panel (dental only) */}
+          {!aiPanelOpen && !mynaWorkspaceExpanded && currentView === "healthcare-patients" && (
+            <PatientsL2NavPanel
+              activeItem={patientsL2Active}
+              onActiveItemChange={setPatientsL2Active}
+            />
+          )}
+          {/* Intake L2 nav panel (dental only) */}
+          {!aiPanelOpen && !mynaWorkspaceExpanded && currentView === "healthcare-intake" && (
+            <IntakeL2NavPanel
+              activeItem={intakeL2Active}
+              onActiveItemChange={setIntakeL2Active}
+            />
+          )}
+          {/* Insurance L2 nav panel (dental only) */}
+          {!aiPanelOpen && !mynaWorkspaceExpanded && currentView === "healthcare-insurance" && (
+            <InsuranceL2NavPanel
+              activeItem={insuranceL2Active}
+              onActiveItemChange={setInsuranceL2Active}
+            />
+          )}
           {!aiPanelOpen && !mynaWorkspaceExpanded && currentView === "settings" && (
             <SettingsL2NavPanel
               activeSection={settingsL2Active}
@@ -632,9 +674,7 @@ export default function App() {
           {!aiPanelOpen && !mynaWorkspaceExpanded && currentView === "inbox" && (
             <InboxL2NavPanel />
           )}
-          {!aiPanelOpen && !mynaWorkspaceExpanded && currentView === "agents-monitor" && (
-            <AppShellL2Placeholder caption=" " />
-          )}
+
           {/* BirdAI — shell L2 is preview only (same pattern as Chatbot); no rail on agents-builder */}
           {!aiPanelOpen && !mynaWorkspaceExpanded && currentView !== "agents-monitor" && birdAiShellShowsL2Placeholder(currentView) && (
             <AppShellL2Placeholder caption="BirdAI is not hosted in this shell — secondary nav is a preview only." />
@@ -731,12 +771,15 @@ export default function App() {
               <AppShellContentPlaceholder view="aeo-product-listing-1" productLabel="Listings" />
             ) : currentView === "aeo-search-ai" ? (
               <AppShellContentPlaceholder view="aeo-search-ai" productLabel="Search AI" />
+            ) : currentView === "healthcare-patients" ? (
+              <PatientsView patientsL2ActiveItem={patientsL2Active} />
+            ) : currentView === "healthcare-intake" ? (
+              <IntakeView intakeL2ActiveItem={intakeL2Active} />
+            ) : currentView === "healthcare-insurance" ? (
+              <InsuranceView insuranceL2ActiveItem={insuranceL2Active} />
             ) : currentView === "healthcare-frontdesk" ||
-              currentView === "healthcare-insurance" ||
-              currentView === "healthcare-intake" ||
               currentView === "healthcare-prescriptions" ||
-              currentView === "healthcare-claims" ||
-              currentView === "healthcare-patients" ? (
+              currentView === "healthcare-claims" ? (
               <AppShellContentPlaceholder view={currentView} />
             ) : currentView === "conversation-stream" ? (
               <ConversationStream />
