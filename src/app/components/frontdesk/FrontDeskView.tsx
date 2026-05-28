@@ -21,5 +21,6 @@ export function FrontDeskView({ frontdeskL2ActiveItem }: { frontdeskL2ActiveItem
     return <ReviewQueriesPage />;
   }
 
-  return <ReviewQueriesPage />;
+  // Outcomes and Resources pages — placeholder until content is built
+  return <AppShellContentPlaceholder view="healthcare-frontdesk" />;
 }
