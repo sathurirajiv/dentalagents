@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { createColumnHelper, type ColumnDef } from "@tanstack/react-table";
 import { FunnelSimple } from "@phosphor-icons/react";
-import { Info, LayoutGrid, Mail, MessageSquare, MoreHorizontal, Phone, Search } from "lucide-react";
+import { ChevronDown, Info, Mail, MessageSquare, MoreHorizontal, Phone, Search } from "lucide-react";
 import { MainCanvasViewHeader } from "@/app/components/layout/MainCanvasViewHeader";
 import { AppDataTable } from "@/app/components/ui/AppDataTable";
 import { Button } from "@/app/components/ui/button";
@@ -43,37 +43,37 @@ type LocationRow = {
 // ─── Data ────────────────────────────────────────────────────────────────────
 
 const QUERY_ROWS: QueryRow[] = [
-  { id: "q1",  patientName: "Michael Johnson", channel: "chat",  aiSummary: "Patient follow-up inquiries are outside AI's scope",        when: "2 weeks ago",  internalNote: "Follow-up needed on blood pressure — monitor closely",     status: "answered"   },
-  { id: "q2",  patientName: "Emily Smith",     channel: "phone", aiSummary: "Insurance verification requests are not handled by AI",      when: "5 hours ago",  internalNote: "Request additional tests for fatigue — possible anemia",    status: "answered"   },
-  { id: "q3",  patientName: "Joshua Brown",    channel: "chat",  aiSummary: "Lab test results interpretation is beyond AI's capability", when: "1 month ago",  internalNote: "Patient reports increased anxiety levels — refer to psych", status: "routed"     },
-  { id: "q4",  patientName: "Sophia Garcia",   channel: "email", aiSummary: "Appointment cancellations cannot be processed by AI",        when: "Yesterday",    internalNote: null,                                                        status: "answered"   },
-  { id: "q5",  patientName: "Daniel Martinez", channel: "chat",  aiSummary: "Prescription refills are outside AI's functionality",        when: "Last Friday",  internalNote: "Discuss weight management options — dietary referral",       status: "unresolved" },
-  { id: "q6",  patientName: "Ava Rodriguez",   channel: "phone", aiSummary: "Medical history updates are not managed by AI",              when: "3 weeks ago",  internalNote: "Patient experiencing joint pain — evaluate for arthritis",   status: "answered"   },
-  { id: "q7",  patientName: "James Wilson",    channel: "phone", aiSummary: "Referral requests are beyond AI's capabilities",             when: "2 days ago",   internalNote: null,                                                        status: "escalated"  },
-  { id: "q8",  patientName: "Isabella Lee",    channel: "email", aiSummary: "Patient feedback collection is outside AI's scope",          when: "Last Saturday", internalNote: "Review vaccination history — update required for travel",   status: "answered"   },
-  { id: "q9",  patientName: "David Harris",    channel: "email", aiSummary: "Surgical scheduling inquiries cannot be handled by AI",      when: "4 hours ago",  internalNote: "Patient asks about sleep issues — consider sleep study",     status: "answered"   },
-  { id: "q10", patientName: "Mia Clark",       channel: "chat",  aiSummary: "Clinical trial information requests are not within AI scope", when: "Last year",   internalNote: null,                                                        status: "escalated"  },
+  { id: "q1",  patientName: "Michael Johnson", channel: "chat",  aiSummary: "Patient follow-up inquiries are outside AI's scope",         when: "2 weeks ago",   internalNote: "Follow-up needed on blood pressure — monitor closely",      status: "answered"   },
+  { id: "q2",  patientName: "Emily Smith",     channel: "phone", aiSummary: "Insurance verification requests are not handled by AI",       when: "5 hours ago",   internalNote: "Request additional tests for fatigue — possible anemia",     status: "answered"   },
+  { id: "q3",  patientName: "Joshua Brown",    channel: "chat",  aiSummary: "Lab test results interpretation is beyond AI's capability",   when: "1 month ago",   internalNote: "Patient reports increased anxiety levels — refer to psych",  status: "routed"     },
+  { id: "q4",  patientName: "Sophia Garcia",   channel: "email", aiSummary: "Appointment cancellations cannot be processed by AI",         when: "Yesterday",     internalNote: null,                                                         status: "answered"   },
+  { id: "q5",  patientName: "Daniel Martinez", channel: "chat",  aiSummary: "Prescription refills are outside AI's functionality",         when: "Last Friday",   internalNote: "Discuss weight management options — dietary referral",        status: "unresolved" },
+  { id: "q6",  patientName: "Ava Rodriguez",   channel: "phone", aiSummary: "Medical history updates are not managed by AI",               when: "3 weeks ago",   internalNote: "Patient experiencing joint pain — evaluate for arthritis",    status: "answered"   },
+  { id: "q7",  patientName: "James Wilson",    channel: "phone", aiSummary: "Referral requests are beyond AI's capabilities",              when: "2 days ago",    internalNote: null,                                                         status: "escalated"  },
+  { id: "q8",  patientName: "Isabella Lee",    channel: "email", aiSummary: "Patient feedback collection is outside AI's scope",           when: "Last Saturday", internalNote: "Review vaccination history — update required for travel",    status: "answered"   },
+  { id: "q9",  patientName: "David Harris",    channel: "email", aiSummary: "Surgical scheduling inquiries cannot be handled by AI",       when: "4 hours ago",   internalNote: "Patient asks about sleep issues — consider sleep study",      status: "answered"   },
+  { id: "q10", patientName: "Mia Clark",       channel: "chat",  aiSummary: "Clinical trial information requests are not within AI scope", when: "Last year",     internalNote: null,                                                         status: "escalated"  },
 ];
 
 const LOCATION_ROWS: LocationRow[] = [
-  { id: "l1",  location: "San Francisco, CA", totalQueries: 15, answered: 15, routed: 5,  escalated: 2,  unresolved: 8  },
-  { id: "l2",  location: "Austin, TX",        totalQueries: 7,  answered: 7,  routed: null, escalated: 3, unresolved: null },
-  { id: "l3",  location: "New York, NY",      totalQueries: null, answered: null, routed: 12, escalated: null, unresolved: 3 },
-  { id: "l4",  location: "Miami, FL",         totalQueries: 10, answered: 10, routed: 7,  escalated: 5,  unresolved: 15 },
-  { id: "l5",  location: "Seattle, WA",       totalQueries: 4,  answered: 4,  routed: null, escalated: 6, unresolved: null },
-  { id: "l6",  location: "Chicago, IL",       totalQueries: null, answered: null, routed: 8, escalated: 7, unresolved: 7 },
-  { id: "l7",  location: "Denver, CO",        totalQueries: 9,  answered: 9,  routed: 20, escalated: null, unresolved: 12 },
-  { id: "l8",  location: "Phoenix, AZ",       totalQueries: 3,  answered: 3,  routed: null, escalated: 9, unresolved: null },
-  { id: "l9",  location: "Portland, OR",      totalQueries: 12, answered: 12, routed: 15, escalated: 10, unresolved: 1 },
-  { id: "l10", location: "Orlando, FL",       totalQueries: null, answered: null, routed: 3, escalated: null, unresolved: 4 },
+  { id: "l1",  location: "San Francisco, CA", totalQueries: 15,   answered: 15,   routed: 5,    escalated: 2,    unresolved: 8    },
+  { id: "l2",  location: "Austin, TX",        totalQueries: 7,    answered: 7,    routed: null,  escalated: 3,    unresolved: null  },
+  { id: "l3",  location: "New York, NY",      totalQueries: null, answered: null, routed: 12,   escalated: null, unresolved: 3    },
+  { id: "l4",  location: "Miami, FL",         totalQueries: 10,   answered: 10,   routed: 7,    escalated: 5,    unresolved: 15   },
+  { id: "l5",  location: "Seattle, WA",       totalQueries: 4,    answered: 4,    routed: null,  escalated: 6,    unresolved: null  },
+  { id: "l6",  location: "Chicago, IL",       totalQueries: null, answered: null, routed: 8,    escalated: 7,    unresolved: 7    },
+  { id: "l7",  location: "Denver, CO",        totalQueries: 9,    answered: 9,    routed: 20,   escalated: null, unresolved: 12   },
+  { id: "l8",  location: "Phoenix, AZ",       totalQueries: 3,    answered: 3,    routed: null,  escalated: 9,    unresolved: null  },
+  { id: "l9",  location: "Portland, OR",      totalQueries: 12,   answered: 12,   routed: 15,   escalated: 10,   unresolved: 1    },
+  { id: "l10", location: "Orlando, FL",       totalQueries: null, answered: null, routed: 3,    escalated: null, unresolved: 4    },
 ];
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 const STATUS_LABEL: Record<QueryStatus, string> = {
-  answered: "Answered",
-  routed: "Routed",
-  escalated: "Escalated",
+  answered:   "Answered",
+  routed:     "Routed",
+  escalated:  "Escalated",
   unresolved: "Unresolved",
 };
 
@@ -92,8 +92,8 @@ function ChannelIcon({ channel }: { channel: QueryChannel }) {
 
 function MetricCard({ value, label, tooltip }: { value: string; label: string; tooltip: string }) {
   return (
-    <div className="flex flex-col rounded-lg border border-border bg-card p-4">
-      <span className="text-[24px] font-medium leading-[36px] tracking-[-0.02em] tabular-nums text-foreground">
+    <div className="flex flex-col rounded-lg border border-border bg-card p-5">
+      <span className="text-[28px] font-medium leading-[40px] tracking-[-0.02em] tabular-nums text-foreground">
         {value}
       </span>
       <div className="mt-2 flex items-center gap-1">
@@ -128,8 +128,14 @@ function dash(v: number | null) {
 
 export function ReviewQueriesPage() {
   const [activeTab, setActiveTab] = useState<"all" | "by-location">("all");
+  const [statusFilter, setStatusFilter] = useState<QueryStatus | null>(null);
   const [columnSheetOpen, setColumnSheetOpen] = useState(false);
   const [locationColumnSheetOpen, setLocationColumnSheetOpen] = useState(false);
+
+  const filteredQueryRows = useMemo(
+    () => statusFilter ? QUERY_ROWS.filter((r) => r.status === statusFilter) : QUERY_ROWS,
+    [statusFilter],
+  );
 
   const queryColumns = useMemo<ColumnDef<QueryRow, unknown>[]>(() => [
     queryColHelper.accessor("patientName", {
@@ -173,9 +179,7 @@ export function ReviewQueriesPage() {
       meta: { settingsLabel: "Internal note" },
       cell: (info) => {
         const v = info.getValue();
-        return (
-          <span className="truncate text-[13px] text-muted-foreground">{v ?? "—"}</span>
-        );
+        return <span className="truncate text-[13px] text-muted-foreground">{v ?? "—"}</span>;
       },
     }),
     queryColHelper.accessor("status", {
@@ -244,65 +248,81 @@ export function ReviewQueriesPage() {
     }),
   ], []);
 
+  const headerActions = (
+    <div className="flex items-center gap-2">
+      <Button type="button" variant="outline" size="icon" aria-label="Search queries">
+        <Search className="h-[14px] w-[14px]" strokeWidth={1.6} absoluteStrokeWidth />
+      </Button>
+
+      {/* Status filter — All tab only */}
+      {activeTab === "all" && (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              type="button"
+              variant={statusFilter ? "default" : "outline"}
+              className="h-[var(--button-height)] gap-1.5 rounded-lg text-[13px]"
+            >
+              {statusFilter ? STATUS_LABEL[statusFilter] : "All status"}
+              <ChevronDown className="h-3 w-3 opacity-60" strokeWidth={1.6} absoluteStrokeWidth />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-40">
+            <DropdownMenuItem
+              className="text-[13px]"
+              onSelect={() => setStatusFilter(null)}
+            >
+              All status
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            {(["answered", "routed", "escalated", "unresolved"] as const).map((s) => (
+              <DropdownMenuItem
+                key={s}
+                className="text-[13px]"
+                onSelect={() => setStatusFilter(s)}
+              >
+                {STATUS_LABEL[s]}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )}
+
+      <Button type="button" variant="outline" size="icon" aria-label="Filter queries">
+        <FunnelSimple size={14} weight="regular" />
+      </Button>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button type="button" variant="outline" size="icon" aria-label="More actions">
+            <MoreHorizontal className="h-[14px] w-[14px]" strokeWidth={1.6} absoluteStrokeWidth />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-48">
+          <DropdownMenuItem className="text-[13px]">Export queries</DropdownMenuItem>
+          <DropdownMenuItem className="text-[13px]">Bulk assign</DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem className="text-[13px]">Print</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
+  );
+
   return (
     <div className="flex h-full min-h-0 flex-col bg-background">
       <MainCanvasViewHeader
         title="Review queries"
         description="Monitor patient queries handled by the front desk agent and team."
-        actions={(
-          <div className="flex items-center gap-2">
-            <Button type="button" variant="outline" size="icon" aria-label="Search queries">
-              <Search className="h-[14px] w-[14px]" strokeWidth={1.6} absoluteStrokeWidth />
-            </Button>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button type="button" variant="outline" className="h-[var(--button-height)] gap-1.5 rounded-lg text-[13px]">
-                  All status
-                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className="opacity-60" aria-hidden>
-                    <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-40">
-                <DropdownMenuItem className="text-[13px]">All status</DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-[13px]">Answered</DropdownMenuItem>
-                <DropdownMenuItem className="text-[13px]">Routed</DropdownMenuItem>
-                <DropdownMenuItem className="text-[13px]">Escalated</DropdownMenuItem>
-                <DropdownMenuItem className="text-[13px]">Unresolved</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <Button type="button" variant="outline" size="icon" aria-label="Grid view">
-              <LayoutGrid className="h-[14px] w-[14px]" strokeWidth={1.6} absoluteStrokeWidth />
-            </Button>
-            <Button type="button" variant="outline" size="icon" aria-label="Filter queries">
-              <FunnelSimple size={14} weight="regular" />
-            </Button>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button type="button" variant="outline" size="icon" aria-label="More actions">
-                  <MoreHorizontal className="h-[14px] w-[14px]" strokeWidth={1.6} absoluteStrokeWidth />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem className="text-[13px]">Export queries</DropdownMenuItem>
-                <DropdownMenuItem className="text-[13px]">Bulk assign</DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-[13px]">Print</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        )}
+        actions={headerActions}
       />
 
       {/* Summary cards */}
-      <div className="shrink-0 px-6 pb-4">
+      <div className="shrink-0 px-6 pb-6">
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-5">
-          <MetricCard value="13"  label="Queries"     tooltip="Total patient queries received in the selected period." />
-          <MetricCard value="6"   label="Answered"    tooltip="Queries fully resolved by the front desk agent without escalation." />
-          <MetricCard value="4"   label="Routed"      tooltip="Queries forwarded to the appropriate team member or department." />
-          <MetricCard value="1"   label="Escalated"   tooltip="Queries escalated to a senior team member due to complexity." />
-          <MetricCard value="1"   label="Unresolved"  tooltip="Queries that remain open and have not yet been addressed." />
+          <MetricCard value="13" label="Queries"    tooltip="Total patient queries received in the selected period." />
+          <MetricCard value="6"  label="Answered"   tooltip="Queries fully resolved by the front desk agent without escalation." />
+          <MetricCard value="4"  label="Routed"     tooltip="Queries forwarded to the appropriate team member or department." />
+          <MetricCard value="1"  label="Escalated"  tooltip="Queries escalated to a senior team member due to complexity." />
+          <MetricCard value="1"  label="Unresolved" tooltip="Queries that remain open and have not yet been addressed." />
         </div>
       </div>
 
@@ -336,8 +356,8 @@ export function ReviewQueriesPage() {
       {activeTab === "all" && (
         <div className="min-h-0 flex-1 px-6 pb-6 pt-2">
           <AppDataTable<QueryRow>
-            tableId="frontdesk.queries.all.v1"
-            data={QUERY_ROWS}
+            tableId="frontdesk.queries.all.v2"
+            data={filteredQueryRows}
             columns={queryColumns}
             initialSorting={[{ id: "status", desc: false }]}
             getRowId={(row) => row.id}
@@ -347,7 +367,7 @@ export function ReviewQueriesPage() {
             columnSheetOpen={columnSheetOpen}
             onColumnSheetOpenChange={setColumnSheetOpen}
             stickyFirstColumn={false}
-            rowDensity="default"
+            rowDensity="medium"
           />
         </div>
       )}
@@ -356,7 +376,7 @@ export function ReviewQueriesPage() {
       {activeTab === "by-location" && (
         <div className="min-h-0 flex-1 px-6 pb-6 pt-2">
           <AppDataTable<LocationRow>
-            tableId="frontdesk.queries.bylocation.v1"
+            tableId="frontdesk.queries.bylocation.v2"
             data={LOCATION_ROWS}
             columns={locationColumns}
             initialSorting={[{ id: "totalQueries", desc: true }]}
@@ -367,7 +387,7 @@ export function ReviewQueriesPage() {
             columnSheetOpen={locationColumnSheetOpen}
             onColumnSheetOpenChange={setLocationColumnSheetOpen}
             stickyFirstColumn={false}
-            rowDensity="default"
+            rowDensity="medium"
           />
         </div>
       )}
