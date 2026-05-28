@@ -248,71 +248,69 @@ export function ReviewQueriesPage() {
     }),
   ], []);
 
-  const headerActions = (
-    <div className="flex items-center gap-2">
-      <Button type="button" variant="outline" size="icon" aria-label="Search queries">
-        <Search className="h-[14px] w-[14px]" strokeWidth={1.6} absoluteStrokeWidth />
-      </Button>
-
-      {/* Status filter — All tab only */}
-      {activeTab === "all" && (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              type="button"
-              variant={statusFilter ? "default" : "outline"}
-              className="h-[var(--button-height)] gap-1.5 rounded-lg text-[13px]"
-            >
-              {statusFilter ? STATUS_LABEL[statusFilter] : "All status"}
-              <ChevronDown className="h-3 w-3 opacity-60" strokeWidth={1.6} absoluteStrokeWidth />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-40">
-            <DropdownMenuItem
-              className="text-[13px]"
-              onSelect={() => setStatusFilter(null)}
-            >
-              All status
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            {(["answered", "routed", "escalated", "unresolved"] as const).map((s) => (
-              <DropdownMenuItem
-                key={s}
-                className="text-[13px]"
-                onSelect={() => setStatusFilter(s)}
-              >
-                {STATUS_LABEL[s]}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )}
-
-      <Button type="button" variant="outline" size="icon" aria-label="Filter queries">
-        <FunnelSimple size={14} weight="regular" />
-      </Button>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button type="button" variant="outline" size="icon" aria-label="More actions">
-            <MoreHorizontal className="h-[14px] w-[14px]" strokeWidth={1.6} absoluteStrokeWidth />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-48">
-          <DropdownMenuItem className="text-[13px]">Export queries</DropdownMenuItem>
-          <DropdownMenuItem className="text-[13px]">Bulk assign</DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem className="text-[13px]">Print</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
-  );
-
   return (
     <div className="flex h-full min-h-0 flex-col bg-background">
       <MainCanvasViewHeader
         title="Review queries"
         description="Monitor patient queries handled by the front desk agent and team."
-        actions={headerActions}
+        actions={(
+          <div className="flex items-center gap-2">
+            <Button type="button" variant="outline" size="icon" aria-label="Search queries">
+              <Search className="h-[14px] w-[14px]" strokeWidth={1.6} absoluteStrokeWidth />
+            </Button>
+
+            {/* Status filter — All tab only */}
+            {activeTab === "all" && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    type="button"
+                    variant={statusFilter ? "default" : "outline"}
+                    className="h-[var(--button-height)] gap-1.5 rounded-lg text-[13px]"
+                  >
+                    {statusFilter ? STATUS_LABEL[statusFilter] : "All status"}
+                    <ChevronDown className="h-3 w-3 opacity-60" strokeWidth={1.6} absoluteStrokeWidth />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-40">
+                  <DropdownMenuItem
+                    className="text-[13px]"
+                    onClick={() => setStatusFilter(null)}
+                  >
+                    All status
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  {(["answered", "routed", "escalated", "unresolved"] as const).map((s) => (
+                    <DropdownMenuItem
+                      key={s}
+                      className="text-[13px]"
+                      onClick={() => setStatusFilter(s)}
+                    >
+                      {STATUS_LABEL[s]}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
+
+            <Button type="button" variant="outline" size="icon" aria-label="Filter queries">
+              <FunnelSimple size={14} weight="regular" />
+            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button type="button" variant="outline" size="icon" aria-label="More actions">
+                  <MoreHorizontal className="h-[14px] w-[14px]" strokeWidth={1.6} absoluteStrokeWidth />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem className="text-[13px]">Export queries</DropdownMenuItem>
+                <DropdownMenuItem className="text-[13px]">Bulk assign</DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="text-[13px]">Print</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        )}
       />
 
       {/* Summary cards */}
