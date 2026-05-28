@@ -26,6 +26,13 @@ import {
 import { toast } from "sonner";
 import { MainCanvasViewHeader } from "@/app/components/layout/MainCanvasViewHeader";
 import { Button } from "@/app/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/app/components/ui/dropdown-menu";
 import { TextTabsRow } from "@/app/components/ui/text-tabs";
 
 /* ═══════════════════════════════════════════
@@ -810,9 +817,31 @@ function AgentCard({ agent, onConfigure }: { agent: AgentInstance; onConfigure: 
           <Button type="button" variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); onConfigure(agent); }} className="rounded-[6px]" title="Settings">
             <Settings className="w-3.5 h-3.5 text-[#888] dark:text-muted-foreground" />
           </Button>
-          <Button type="button" variant="ghost" size="icon" onClick={(e) => e.stopPropagation()} className="rounded-[6px]" title="More">
-            <MoreHorizontal className="w-3.5 h-3.5 text-[#888] dark:text-muted-foreground" />
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                type="button"
+                onClick={(e) => e.stopPropagation()}
+                className="inline-flex h-8 w-8 items-center justify-center rounded-[6px] text-muted-foreground hover:bg-muted hover:text-foreground"
+                title="More"
+              >
+                <MoreHorizontal className="w-3.5 h-3.5" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuItem className="text-[13px]" onClick={(e) => { e.stopPropagation(); onConfigure(agent); }}>Edit</DropdownMenuItem>
+              {agent.status === "active" ? (
+                <DropdownMenuItem className="text-[13px]" onClick={(e) => { e.stopPropagation(); handleToggleStatus(e); }}>Pause</DropdownMenuItem>
+              ) : agent.status === "paused" ? (
+                <DropdownMenuItem className="text-[13px]" onClick={(e) => { e.stopPropagation(); handleToggleStatus(e); }}>Resume</DropdownMenuItem>
+              ) : null}
+              <DropdownMenuItem className="text-[13px]">Duplicate</DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className="text-[13px]">Logs</DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className="text-[13px] text-destructive focus:text-destructive">Delete</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
     </div>
@@ -868,9 +897,30 @@ function AgentRow({ agent, onConfigure }: { agent: AgentInstance; onConfigure: (
               <Play className="w-3.5 h-3.5 text-[#2552ED]" />
             </Button>
           ) : null}
-          <Button type="button" variant="ghost" size="icon" onClick={(e) => e.stopPropagation()} className="rounded-[6px]">
-            <MoreHorizontal className="w-3.5 h-3.5 text-[#888] dark:text-muted-foreground" />
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                type="button"
+                onClick={(e) => e.stopPropagation()}
+                className="inline-flex h-8 w-8 items-center justify-center rounded-[6px] text-muted-foreground hover:bg-muted hover:text-foreground"
+              >
+                <MoreHorizontal className="w-3.5 h-3.5" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuItem className="text-[13px]" onClick={(e) => { e.stopPropagation(); onConfigure(agent); }}>Edit</DropdownMenuItem>
+              {agent.status === "active" ? (
+                <DropdownMenuItem className="text-[13px]" onClick={(e) => { e.stopPropagation(); handleToggleStatus(e); }}>Pause</DropdownMenuItem>
+              ) : agent.status === "paused" ? (
+                <DropdownMenuItem className="text-[13px]" onClick={(e) => { e.stopPropagation(); handleToggleStatus(e); }}>Resume</DropdownMenuItem>
+              ) : null}
+              <DropdownMenuItem className="text-[13px]">Duplicate</DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className="text-[13px]">Logs</DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className="text-[13px] text-destructive focus:text-destructive">Delete</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
     </div>
