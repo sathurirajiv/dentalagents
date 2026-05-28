@@ -8,6 +8,8 @@ import {
   PaymentsL2NavPanel,
   PAYMENTS_L2_DEFAULT_ACTIVE_KEY,
   APPOINTMENTS_L2_CALENDAR_KEY,
+  FrontDeskL2NavPanel,
+  FRONTDESK_L2_DEFAULT_ACTIVE_KEY,
   PatientsL2NavPanel,
   PATIENTS_L2_DEFAULT_ACTIVE_KEY,
   IntakeL2NavPanel,
@@ -49,6 +51,7 @@ import { ScheduleBuilderView } from "./components/ScheduleBuilderView";
 import { ReferralsView, referralsL2KeyToSection } from "./components/ReferralsView";
 import { PaymentsView, paymentsL2KeyToStatusFilter } from "./components/PaymentsView";
 import { AppointmentsView } from "./components/AppointmentsView";
+import { FrontDeskView } from "./components/frontdesk/FrontDeskView";
 import { PatientsView } from "./components/patients/PatientsView";
 import { IntakeView } from "./components/intake/IntakeView";
 import { InsuranceView } from "./components/insurance/InsuranceView";
@@ -220,6 +223,10 @@ export default function App() {
   const [intakeL2Active, setIntakeL2Active] = usePersistedState(
     "nav:l2:intake",
     INTAKE_L2_DEFAULT_ACTIVE_KEY,
+  );
+  const [frontdeskL2Active, setFrontdeskL2Active] = usePersistedState(
+    "nav:l2:frontdesk",
+    FRONTDESK_L2_DEFAULT_ACTIVE_KEY,
   );
   const [insuranceL2Active, setInsuranceL2Active] = usePersistedState(
     "nav:l2:insurance",
@@ -637,6 +644,13 @@ export default function App() {
               onActiveItemChange={setAppointmentsL2Active}
             />
           )}
+          {/* Front desk L2 nav panel (dental only) */}
+          {!aiPanelOpen && !mynaWorkspaceExpanded && currentView === "healthcare-frontdesk" && (
+            <FrontDeskL2NavPanel
+              activeItem={frontdeskL2Active}
+              onActiveItemChange={setFrontdeskL2Active}
+            />
+          )}
           {/* Patients L2 nav panel (dental only) */}
           {!aiPanelOpen && !mynaWorkspaceExpanded && currentView === "healthcare-patients" && (
             <PatientsL2NavPanel
@@ -777,8 +791,9 @@ export default function App() {
               <IntakeView intakeL2ActiveItem={intakeL2Active} />
             ) : currentView === "healthcare-insurance" ? (
               <InsuranceView insuranceL2ActiveItem={insuranceL2Active} />
-            ) : currentView === "healthcare-frontdesk" ||
-              currentView === "healthcare-prescriptions" ||
+            ) : currentView === "healthcare-frontdesk" ? (
+              <FrontDeskView frontdeskL2ActiveItem={frontdeskL2Active} />
+            ) : currentView === "healthcare-prescriptions" ||
               currentView === "healthcare-claims" ? (
               <AppShellContentPlaceholder view={currentView} />
             ) : currentView === "conversation-stream" ? (

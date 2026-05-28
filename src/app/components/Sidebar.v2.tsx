@@ -1880,6 +1880,48 @@ export function IntakeL2NavPanel({ activeItem, onActiveItemChange }: IntakeL2Nav
 }
 
 /* ═══════════════════════════════════════════
+   Front desk L2 Nav Panel (dental only)
+   ═══════════════════════════════════════════ */
+
+export { FRONTDESK_L2_DEFAULT_ACTIVE_KEY } from "@/app/components/frontdesk/frontdeskL2Nav";
+
+export type FrontDeskL2NavPanelProps = {
+  activeItem: string;
+  onActiveItemChange: (key: string) => void;
+};
+
+export function FrontDeskL2NavPanel({ activeItem, onActiveItemChange }: FrontDeskL2NavPanelProps) {
+  return (
+    <L2NavLayout
+      defaultExpandedSections={["Human actions"]}
+      sections={[
+        {
+          label: "Human actions",
+          children: ["Review queries"],
+        },
+        {
+          label: "Agents",
+          children: ["Front desk agent"],
+        },
+        {
+          label: "Outcomes",
+          children: ["Resolutions", "Top questions", { label: "All reports", external: true }],
+        },
+        {
+          label: "Resources",
+          children: ["Knowledge base", "Widgets", "Phone number", "Voices"],
+        },
+      ]}
+      defaultActive="Human actions/Review queries"
+      activeItem={activeItem}
+      onActiveItemChange={onActiveItemChange}
+      singleOpenAccordion
+      data-no-print
+    />
+  );
+}
+
+/* ═══════════════════════════════════════════
    Insurance L2 Nav Panel (dental only)
    ═══════════════════════════════════════════ */
 
