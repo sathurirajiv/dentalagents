@@ -1897,22 +1897,29 @@ export function FrontDeskL2NavPanel({ activeItem, onActiveItemChange }: FrontDes
       sections={[
         {
           label: "Human actions",
-          children: ["Review queries"],
+          children: ["Manage appointments", "Review waitlist", "Manage intake"],
         },
         {
           label: "Agents",
-          children: ["Front desk agent"],
+          children: [
+            "Frontdesk agent",
+            "Appointment management agent",
+            "Insurance verification agent",
+            "Waitlist agent",
+            "Pre-visit agent",
+            "Reminder agent",
+          ],
         },
         {
           label: "Outcomes",
-          children: ["Resolutions", "Top questions"],
+          children: ["Appointments overview", "Waitlist filled", "Intakes completed"],
         },
         {
           label: "Resources",
-          children: ["Knowledge base", "Widgets", "Phone number", "Voices"],
+          children: ["Knowledge base", "Phone numbers", "Widgets", "Providers"],
         },
       ]}
-      defaultActive="Human actions/Review queries"
+      defaultActive="Human actions/Manage appointments"
       activeItem={activeItem}
       onActiveItemChange={onActiveItemChange}
       singleOpenAccordion
