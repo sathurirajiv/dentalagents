@@ -1905,7 +1905,7 @@ export function FrontDeskL2NavPanel({ activeItem, onActiveItemChange }: FrontDes
         },
         {
           label: "Outcomes",
-          children: ["Resolutions", "Top questions", { label: "All reports", external: true }],
+          children: ["Resolutions", "Top questions"],
         },
         {
           label: "Resources",
