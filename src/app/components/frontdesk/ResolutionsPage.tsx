@@ -5,7 +5,6 @@ import {
 } from "recharts";
 import {
   CalendarDays, ChevronDown, MoreHorizontal, SlidersHorizontal,
-  TrendingDown, TrendingUp,
 } from "lucide-react";
 import { MainCanvasViewHeader } from "@/app/components/layout/MainCanvasViewHeader";
 import { Button } from "@/app/components/ui/button";
@@ -111,29 +110,22 @@ const AG_TO_ST = [
 
 // ─── Sub-components ──────────────────────────────────────────────────────────
 
-function KpiCard({
+function SummaryMetric({
   label, value, change, positive,
 }: {
   label: string; value: string; change: string; positive: boolean;
 }) {
   return (
-    <div className="flex flex-col gap-1 rounded-lg border border-border bg-background p-4">
-      <span className="text-[12px] text-muted-foreground">{label}</span>
-      <div className="flex items-baseline gap-2">
-        <span className="text-[28px] font-semibold tracking-tight text-foreground">{value}</span>
-        <span
-          className={cn(
-            "flex items-center gap-0.5 text-[12px] font-medium",
-            positive ? "text-green-600 dark:text-green-400" : "text-red-500",
-          )}
-        >
-          {positive
-            ? <TrendingUp className="h-3 w-3" strokeWidth={1.6} absoluteStrokeWidth />
-            : <TrendingDown className="h-3 w-3" strokeWidth={1.6} absoluteStrokeWidth />
-          }
+    <div className="flex flex-col px-5 py-4">
+      <div className="flex items-baseline gap-1.5">
+        <p className="text-[24px] font-medium tabular-nums tracking-[-0.48px] leading-[36px] text-foreground">
+          {value}
+        </p>
+        <p className={cn("text-[12px] font-medium", positive ? "text-emerald-600" : "text-red-500")}>
           {change}
-        </span>
+        </p>
       </div>
+      <p className="mt-1 text-[13px] leading-[18px] text-muted-foreground">{label}</p>
     </div>
   );
 }
@@ -375,14 +367,18 @@ export function ResolutionsPage() {
       {/* Scrollable body */}
       <div className="flex-1 overflow-y-auto px-6 pb-8 pt-2">
 
-        {/* ── Resolution summary KPIs ── */}
+        {/* ── Resolution summary ── */}
         <section className="mb-6">
-          <p className="mb-3 text-[13px] font-medium text-muted-foreground">Resolution summary</p>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-            <KpiCard label="Total Conversations" value="7.9K" change="+36.6%" positive />
-            <KpiCard label="Resolution Rate"     value="72%"  change="-40%"  positive={false} />
-            <KpiCard label="Routing Rate"        value="17.8%" change="+20%" positive />
-            <KpiCard label="Unresolved"          value="9.8%"  change="-10%" positive />
+          <div className="rounded-lg border border-border bg-background">
+            <p className="border-b border-border px-5 py-3 text-[13px] font-medium text-foreground">
+              Resolution summary
+            </p>
+            <div className="grid grid-cols-2 divide-x divide-y divide-border sm:grid-cols-4 sm:divide-y-0">
+              <SummaryMetric label="Total Conversations" value="7.9K"  change="+36.6%" positive />
+              <SummaryMetric label="Resolution Rate"     value="72%"   change="-40%"   positive={false} />
+              <SummaryMetric label="Routing Rate"        value="17.8%" change="+20%"   positive />
+              <SummaryMetric label="Unresolved"          value="9.8%"  change="-10%"   positive />
+            </div>
           </div>
         </section>
 

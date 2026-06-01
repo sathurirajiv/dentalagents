@@ -5,7 +5,7 @@ import {
 } from "recharts";
 import {
   CalendarDays, ChevronDown, MoreHorizontal, SlidersHorizontal,
-  TrendingUp, TrendingDown, HelpCircle, Zap, Clock, RefreshCw,
+  TrendingUp, TrendingDown,
 } from "lucide-react";
 import { MainCanvasViewHeader } from "@/app/components/layout/MainCanvasViewHeader";
 import { Button } from "@/app/components/ui/button";
@@ -129,29 +129,21 @@ const TOP_QUESTIONS = [
 // ─── Sub-components ──────────────────────────────────────────────────────────
 
 function KpiCard({
-  icon: Icon, label, value, change, positive, color,
+  label, value, change, positive,
 }: {
-  icon: React.ElementType;
-  label: string; value: string; change: string; positive: boolean; color: string;
+  label: string; value: string; change: string; positive: boolean;
 }) {
   return (
-    <div className="flex flex-col gap-3 rounded-lg border border-border bg-background p-4">
-      <div className="flex items-center justify-between">
-        <span className="text-[12px] text-muted-foreground">{label}</span>
-        <span className="flex h-7 w-7 items-center justify-center rounded-md" style={{ background: `${color}18` }}>
-          <Icon className="h-3.5 w-3.5" style={{ color }} strokeWidth={1.6} />
-        </span>
-      </div>
-      <div className="flex items-baseline gap-2">
-        <span className="text-[24px] font-semibold tracking-tight text-foreground">{value}</span>
-        <span className={cn("flex items-center gap-0.5 text-[12px] font-medium", positive ? "text-green-600" : "text-red-500")}>
-          {positive
-            ? <TrendingUp className="h-3 w-3" strokeWidth={1.6} absoluteStrokeWidth />
-            : <TrendingDown className="h-3 w-3" strokeWidth={1.6} absoluteStrokeWidth />
-          }
+    <div className="flex flex-col rounded-lg border border-border bg-card p-4">
+      <div className="flex items-baseline gap-1.5">
+        <p className="text-[24px] font-medium tabular-nums tracking-[-0.48px] leading-[36px] text-foreground">
+          {value}
+        </p>
+        <p className={cn("text-[12px] font-medium", positive ? "text-emerald-600" : "text-red-500")}>
           {change}
-        </span>
+        </p>
       </div>
+      <p className="mt-1 text-[13px] leading-[18px] text-muted-foreground">{label}</p>
     </div>
   );
 }
@@ -257,10 +249,10 @@ export function TopQuestionsPage() {
 
         {/* ── KPIs ── */}
         <section className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
-          <KpiCard icon={HelpCircle}   label="Total questions"  value="1,618" change="+22%" positive color="#6366f1" />
-          <KpiCard icon={Zap}          label="Auto-answered"    value="68%"   change="+8%"  positive color="#4ade80" />
-          <KpiCard icon={Clock}        label="Avg resolution"   value="4.2m"  change="-18%" positive color="#fbbf24" />
-          <KpiCard icon={RefreshCw}    label="Recurring queries" value="312"  change="+5%"  positive color="#ec4899" />
+          <KpiCard label="Total questions"   value="1,618" change="+22%" positive />
+          <KpiCard label="Auto-answered"     value="68%"   change="+8%"  positive />
+          <KpiCard label="Avg resolution"    value="4.2m"  change="-18%" positive />
+          <KpiCard label="Recurring queries" value="312"   change="+5%"  positive />
         </section>
 
         {/* ── Questions by category ── */}
